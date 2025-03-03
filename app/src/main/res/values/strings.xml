@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Timetable for HSE FE</string>
+    <string name="title_timetable">Timetable for HSE FE</string>
+    <string name="button_students">РАСПИСАНИЕ ДЛЯ СТУДЕНТОВ</string>
+    <string name="button_teachers">РАСПИСАНИЕ ДЛЯ ПРЕПОДАВАТЕЛЯ</string>
+    <string name="university_name">NATIONAL RESEARCH UNIVERSITY</string>
+
+
+    <string name="error_empty_input">За дурака держишь? Введите хоть что-то)</string>
+    <string name="error_invalid_range">Ну, серьезно?! Число должно быть от 1 до 10!</string>
+    <string name="error_invalid_format">Ну-с, супер! Я вообще прочитать не смог, нормально блин введи)</string>
+
+    <string name="button_students_reaction">Салют!) Студентик наш...</string>
+    <string name="button_teachers_reaction">И вам не плошать, даЖ)</string>
+
+    <string name="result_sum">Сумма: %d</string>
+    <string name="result_zero">Произведение чётных: 0</string>
+    <string name="result_multiplicity">Произведение чётных: %d</string>
+</resources>

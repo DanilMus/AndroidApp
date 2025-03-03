@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".BaseActivity">
+
+    <!-- Верхняя синяя панель с заголовком -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="@string/title_timetable"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Основной контент -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="top|center_horizontal"
+        android:layout_marginTop="24dp">
+
+        <!-- Логотип ВШЭ -->
+        <ImageView
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:src="@drawable/hse_logo"
+            android:contentDescription="@string/app_name"/>
+    </LinearLayout>
+
+    <!-- Кнопки -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Кнопка "Расписание для студентов" -->
+        <Button
+            android:id="@+id/button_students"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/button_students"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"/>
+
+        <!-- Кнопка "Расписание для преподавателей" -->
+        <Button
+            android:id="@+id/button_teachers"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/button_teachers"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:gravity="center"/>
+    </LinearLayout>
+</LinearLayout>
