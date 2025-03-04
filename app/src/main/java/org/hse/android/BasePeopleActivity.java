@@ -1,6 +1,9 @@
 package org.hse.android;
 
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -97,31 +100,22 @@ public abstract class BasePeopleActivity extends AppCompatActivity {
         String formattedTime = timeFormat.format(currentTime);
         String dayOfWeek = dayFormat.format(currentTime);
         dayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1);
-        time.setText(formattedTime + ", " + dayOfWeek);
+
+        // Устанавливаем текст с разными цветами
+        String text = getString(R.string.current_time) + formattedTime + ", " + dayOfWeek;
+        SpannableString spannable = new SpannableString(text);
+        spannable.setSpan(new ForegroundColorSpan(getColor(R.color.colorPrimary)), 0, getString(R.string.current_time).length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Красим "Сейчас"
+
+        time.setText(spannable);
     }
+
 
     protected void initData() {
         status.setText("Нет пар");
 
-        if (subject != null) subject.setText("Дисциплина");
-        if (cabinet != null) cabinet.setText("Кабинет");
-        if (corp != null) corp.setText("Корпус");
-        if (teacher != null) teacher.setText("Преподаватель");
-    }
-
-    // Внутренний класс Group (общий для всех)
-    public static class Group {
-        private final int id;
-        private final String name;
-
-        public Group(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
+        if (subject != null) subject.setText(R.string.subject);
+        if (cabinet != null) cabinet.setText(R.string.cabinet);
+        if (corp != null) corp.setText(R.string.corp);
+        if (teacher != null) teacher.setText(R.string.teacher);
     }
 }

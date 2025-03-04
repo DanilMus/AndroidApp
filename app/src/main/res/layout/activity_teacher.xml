@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".StudentActivity">
 
+    <TextView
+        android:id="@+id/header"
+        style="@style/HeaderStyle"
+        android:text="@string/title_timetable"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <!-- Label "Выберите группу" -->
     <TextView
         android:id="@+id/label_choose_teacher"
@@ -15,7 +23,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/choose_teacher"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/header"/>
 
     <!-- Spinner для выбора группы -->
     <Spinner
