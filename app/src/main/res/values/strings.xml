@@ -1,4 +1,5 @@
 <resources>
+    <!-- Строки для activity_base -->
     <string name="app_name">Timetable for HSE FE</string>
     <string name="title_timetable">Timetable for HSE FE</string>
     <string name="button_students">РАСПИСАНИЕ ДЛЯ СТУДЕНТОВ</string>
@@ -16,4 +17,16 @@
     <string name="result_sum">Сумма: %d</string>
     <string name="result_zero">Произведение чётных: 0</string>
     <string name="result_multiplicity">Произведение чётных: %d</string>
+
+    <!-- Строки для activity_student и activity_teacher -->
+    <string name="choose_teacher">Выберите преподавателя:</string>
+    <string name="current_time">Сейчас:</string>
+    <string name="status_pair">Идет пара / Нет пар</string>
+    <string name="subject">Дисциплина</string>
+    <string name="cabinet">Кабинет</string>
+    <string name="corp">Корпус</string>
+    <string name="teacher">Преподаватель</string>
+    <string name="schedule_day">РАСПИСАНИЕ НА ДЕНЬ</string>
+    <string name="schedule_week">РАСПИСАНИЕ НА НЕДЕЛЮ</string>
+    <string name="choose_group">Выберите группу:</string>
 </resources>

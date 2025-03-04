@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LabelStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+    <style name="ValueStyle">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="ButtonStyle">
+        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+</resources>
