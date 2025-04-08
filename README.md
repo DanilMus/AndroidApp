@@ -1,3 +1,6 @@
+### Интерфейс настроек
+![alt text](README_images/image4.png)
+
 ### Интерфейс расписания для студента
 ![alt text](README_images/image0.png)
 ![alt text](README_images/image1.png)

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 public abstract class BasePeopleActivity extends AppCompatActivity {
-    protected static String TAG = "BaseScheduleActivity"; // Будет переопределяться в дочерних классах
+    private static final String TAG = "BaseScheduleActivity";
 
     // Поля для элементов интерфейса
     protected TextView time;
@@ -111,7 +111,7 @@ public abstract class BasePeopleActivity extends AppCompatActivity {
 
 
     protected void initData() {
-        status.setText("Нет пар");
+        status.setText(R.string.status_pair);
 
         if (subject != null) subject.setText(R.string.subject);
         if (cabinet != null) cabinet.setText(R.string.cabinet);

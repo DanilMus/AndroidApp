@@ -1,22 +1,24 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:locale="ru">
     <!-- Строки для activity_base -->
     <string name="app_name">Timetable for HSE FE</string>
     <string name="title_timetable">Timetable for HSE FE</string>
     <string name="button_students">РАСПИСАНИЕ ДЛЯ СТУДЕНТОВ</string>
     <string name="button_teachers">РАСПИСАНИЕ ДЛЯ ПРЕПОДАВАТЕЛЯ</string>
     <string name="university_name">NATIONAL RESEARCH UNIVERSITY</string>
+    <string name="button_settings">НАСТРОЙКИ</string>
 
 
+    <!-- Строки для activity_demo -->
     <string name="error_empty_input">За дурака держишь? Введите хоть что-то)</string>
     <string name="error_invalid_range">Ну, серьезно?! Число должно быть от 1 до 10!</string>
     <string name="error_invalid_format">Ну-с, супер! Я вообще прочитать не смог, нормально блин введи)</string>
-
-    <string name="button_students_reaction">Салют!) Студентик наш...</string>
+    <string name="button_students_reaction">Салют!) Студентик наш</string>
     <string name="button_teachers_reaction">И вам не плошать, даЖ)</string>
-
     <string name="result_sum">Сумма: %d</string>
     <string name="result_zero">Произведение чётных: 0</string>
     <string name="result_multiplicity">Произведение чётных: %d</string>
+
 
     <!-- Строки для activity_student и activity_teacher -->
     <string name="choose_teacher">Выберите преподавателя:</string>
@@ -29,4 +31,15 @@
     <string name="schedule_day">РАСПИСАНИЕ НА ДЕНЬ</string>
     <string name="schedule_week">РАСПИСАНИЕ НА НЕДЕЛЮ</string>
     <string name="choose_group">Выберите группу:</string>
+
+
+    <!--  Строки для activity_settings  -->
+    <string name="enter_name">Укажите ваше имя</string>
+    <string name="current_light">Текущий уровень освещенности: %1$.2f lx</string>
+    <string name="take_photo">Сделать фото</string>
+    <string name="save">Сохранить</string>
+    <string name="provide_photo">Укажите фото</string>
+    <string name="photo_permission_required">Необходимо разрешение на использование камеры</string>
+    <string name="photo_saved">Успешно сохранено</string>
+    <string name="sensors_list">Доступные сенсоры:</string>
 </resources>

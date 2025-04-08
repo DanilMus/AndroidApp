@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".BaseActivity">
+    tools:context=".MainActivity">
 
     <!-- Верхняя синяя панель с заголовком -->
     <TextView
@@ -62,6 +62,18 @@
             android:layout_height="48dp"
             android:text="@string/button_teachers"
             android:backgroundTint="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"/>
+
+        <!-- Кнопка "Настройки" -->
+        <Button
+            android:id="@+id/button_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="@string/button_settings"
+            android:backgroundTint="@color/colorPrimaryVariant"
             android:textColor="@android:color/white"
             android:textSize="15sp"
             android:gravity="center"/>
