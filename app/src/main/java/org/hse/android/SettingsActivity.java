@@ -15,6 +15,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -24,7 +25,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -36,11 +36,20 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final String TAG = "SettingsActivity";
     private static final int PERMISSION_REQUEST_CAMERA = 2;
 
-
+    // UI-элементы
     private ImageView photoImageView;
+    private EditText nameEditText;
+    private TextView lightSensorTextView;
+
+    // Сенсоры
+    private SensorManager sensorManager;
+    private Sensor lightSensor;
+    private SensorEventListener lightSensorListener;
+
+    // Камера (новый способ — через ActivityResultLauncher)
     private final ActivityResultLauncher<Intent> cameraLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -53,43 +62,33 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 }
             });
-    private EditText nameEditText;
-    private TextView lightSensorTextView;
-    private SensorManager sensorManager;
-    private Sensor lightSensor;
-    private SensorEventListener lightSensorListener;
-    private TextView sensorListTextView; // список датчиков
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        // Инициализация элементов интерфейса
+        // Инициализация интерфейса
         photoImageView = findViewById(R.id.photoImageView);
         nameEditText = findViewById(R.id.nameEditText);
         lightSensorTextView = findViewById(R.id.lightSensorTextView);
         Button takePhotoButton = findViewById(R.id.takePhotoButton);
         Button saveButton = findViewById(R.id.saveButton);
 
-        // Загрузка имени из SharedPreferences
+        // Загружаем имя и фото
         loadNameFromPreferences();
-        // Загрузка фото из файла
         loadImageFromFile();
 
-
-        // Обработка нажатия кнопки "Сделать фото"
+        // Кнопка "Сделать фото"
         takePhotoButton.setOnClickListener(v -> requestCameraPermission());
 
-        // Обработка нажатия кнопки "Сохранить"
+        // Кнопка "Сохранить"
         saveButton.setOnClickListener(v -> {
-            // Сохранение имени
             String name = nameEditText.getText().toString();
-            saveNameToPreferences(name); // Сохраняем имя
+            saveNameToPreferences(name);  // сохраняем имя
             Toast.makeText(this, R.string.photo_saved, Toast.LENGTH_SHORT).show();
 
-            // Сохранение фото
+            // сохраняем фото
             Drawable drawable = photoImageView.getDrawable();
             if (drawable instanceof BitmapDrawable) {
                 Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -97,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        // Подключение к сенсору освещенности
+        // Работа с сенсором освещенности
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
             lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
@@ -110,30 +109,26 @@ public class SettingsActivity extends AppCompatActivity {
 
                 @Override
                 public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                    // Не используется
+                    // Можно не обрабатывать
                 }
             };
+
+            // Выводим список всех сенсоров
+            TextView sensorListTextView = findViewById(R.id.sensorListTextView);
+            StringBuilder sensorInfo = new StringBuilder("Доступные сенсоры:\n");
+            List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ALL);
+
+            for (Sensor sensor : sensorList) {
+                sensorInfo.append("- ").append(sensor.getName()).append("\n");
+            }
+            sensorListTextView.setText(sensorInfo.toString());
         }
-
-        // Получение списка датчиков и их вывод
-        sensorListTextView = findViewById(R.id.sensorListTextView);
-
-        // Получаем список всех сенсоров
-        StringBuilder sensorInfo = new StringBuilder("Доступные сенсоры:\n");
-        List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ALL);
-
-        for (Sensor sensor : sensorList) {
-            sensorInfo.append("- ").append(sensor.getName()).append("\n");
-        }
-
-        // Выводим в TextView
-        sensorListTextView.setText(sensorInfo.toString());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Подписываемся на сенсор при возвращении на экран
+        // Подписка на сенсор при возвращении на экран
         if (lightSensor != null) {
             sensorManager.registerListener(lightSensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -142,23 +137,25 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // Отписываемся от сенсора при уходе с экрана
+        // Отписка от сенсора при уходе
         if (lightSensor != null) {
             sensorManager.unregisterListener(lightSensorListener);
         }
     }
 
-    // Запрос разрешения на использование камеры
+    // Запрашиваем разрешение на использование камеры
     private void requestCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    PERMISSION_REQUEST_CAMERA);
         } else {
             openCamera();
         }
     }
 
-    // Открытие камеры
+    // Открываем камеру
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -166,25 +163,11 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    // Обработка результата от камеры
+    // Обработка результата запроса разрешения
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
-            Bundle extras = data.getExtras();
-            if (extras != null && extras.containsKey("data")) {
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                if (imageBitmap != null) {
-                    photoImageView.setImageBitmap(imageBitmap);
-                }
-            }
-        }
-    }
-
-    // Обработка ответа на запрос разрешений
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);  // важно!
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSION_REQUEST_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -195,20 +178,20 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    // Сохраняем имя пользователя в SharedPreferences
+    // Сохраняем имя пользователя
     private void saveNameToPreferences(String name) {
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         prefs.edit().putString("user_name", name).apply();
     }
 
-    // Загружаем имя из SharedPreferences
+    // Загружаем имя пользователя
     private void loadNameFromPreferences() {
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         String savedName = prefs.getString("user_name", "");
         nameEditText.setText(savedName);
     }
 
-    // Сохранение фото в файл
+    // Сохраняем изображение во внутреннюю память
     private void saveImageToFile(Bitmap bitmap) {
         try {
             File file = new File(getFilesDir(), "user_photo.jpg");
@@ -217,11 +200,11 @@ public class SettingsActivity extends AppCompatActivity {
             fos.flush();
             fos.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Ошибка при сохранении изображения", e);
         }
     }
 
-    // Загрузка фото из файла
+    // Загружаем изображение из файла
     private void loadImageFromFile() {
         File file = new File(getFilesDir(), "user_photo.jpg");
         if (file.exists()) {

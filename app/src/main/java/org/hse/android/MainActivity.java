@@ -12,31 +12,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        View button = findViewById(R.id.button_students);
-        View button2 = findViewById(R.id.button_teachers);
+        View button_students = findViewById(R.id.button_students);
+        View button_teachers = findViewById(R.id.button_teachers);
         View button_settings = findViewById(R.id.button_settings);
 
-        button.setOnClickListener(v -> clickButtonStudents());
-        button2.setOnClickListener(v -> clickButtonTeachers());
+        button_students.setOnClickListener(v -> clickButtonStudents());
+        button_teachers.setOnClickListener(v -> clickButtonTeachers());
         button_settings.setOnClickListener(v -> clickButtonSettings());
-
-        // Запуск DemoActivity
-        // Intent intent = new Intent(this, DemoActivity.class);
-        // startActivity(intent);
     }
 
+    // Кнопка с расписанием студентов
     private void clickButtonStudents() {
 //        Toast.makeText(this, R.string.button_students_reaction, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, StudentActivity.class);
         startActivity(intent);
     }
 
+    // Кнопка с расписанием учителей
     private void clickButtonTeachers() {
 //        Toast.makeText(this, R.string.button_teachers_reaction, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, TeacherActivity.class);
         startActivity(intent);
     }
 
+    // Кнопка с настройками
     private void clickButtonSettings() {
 //        Toast.makeText(this, R.string.button_teachers_reaction, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, SettingsActivity.class);
