@@ -1,3 +1,6 @@
+### Общий экран
+![alt text](README_images/image5.png)
+
 ### Интерфейс настроек
 ![alt text](README_images/image4.png)
 

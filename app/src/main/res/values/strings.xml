@@ -1,5 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
-    tools:locale="ru">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ru">
     <!-- Строки для activity_base -->
     <string name="app_name">Timetable for HSE FE</string>
     <string name="title_timetable">Timetable for HSE FE</string>
