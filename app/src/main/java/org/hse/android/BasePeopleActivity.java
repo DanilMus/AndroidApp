@@ -121,16 +121,18 @@ public abstract class BasePeopleActivity extends AppCompatActivity {
             return;
         }
 
-        // Определяем режим (STUDENT или TEACHER) на основе текущей активности
+        Group selectedGroup = (Group) selectedItem;
         ScheduleMode mode = this instanceof StudentActivity ? ScheduleMode.STUDENT : ScheduleMode.TEACHER;
-        showScheduleImpl(mode, type, (Group) selectedItem);
+        showScheduleImpl(mode, type, selectedGroup.getId(), selectedGroup.getName());
     }
 
-    protected void showScheduleImpl(ScheduleMode mode, ScheduleType type, Group group) {
+    protected void showScheduleImpl(ScheduleMode mode, ScheduleType type, int groupId, String groupName) {
         Intent intent = new Intent(this, ScheduleActivity.class);
-        intent.putExtra("ARG_ID", group.getId());
+        intent.putExtra("ARG_ID", groupId);
         intent.putExtra("ARG_TYPE", type);
         intent.putExtra("ARG_MODE", mode);
+        intent.putExtra("ARG_NAME", groupName);
+        intent.putExtra("ARG_TIME", currentTime); // Передаём время
         startActivity(intent);
     }
 

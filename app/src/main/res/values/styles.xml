@@ -23,4 +23,14 @@
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <!-- Стиль для расписания -->
+    <style name="ScheduleTitle">
+        <item name="android:textSize">24sp</item> <!-- Увеличиваем размер текста -->
+        <item name="android:textStyle">bold</item> <!-- Делаем текст жирным -->
+        <item name="android:textColor">@color/colorPrimary</item> <!-- Используем основной цвет приложения -->
+        <item name="android:paddingBottom">16dp</item> <!-- Отступ снизу -->
+        <item name="android:layout_width">match_parent</item> <!-- Ширина на весь экран -->
+        <item name="android:layout_height">wrap_content</item> <!-- Высота по содержимому -->
+    </style>
 </resources>
