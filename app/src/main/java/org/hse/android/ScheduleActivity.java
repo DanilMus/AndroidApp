@@ -38,11 +38,8 @@ public class ScheduleActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        // Инициализация адаптера с пустым списком и обработчиком кликов
-        List<ScheduleItem> dataList = new ArrayList<>();
-        adapter = new ItemAdapter(dataList, position -> {
-            // Обработчик клика (пока пустой, можно добавить логику позже)
-        });
+        // Инициализация адаптера
+        adapter = new ItemAdapter(this::onScheduleItemClick);
         recyclerView.setAdapter(adapter);
 
         // Устанавливаем заголовок
@@ -53,8 +50,37 @@ public class ScheduleActivity extends AppCompatActivity {
             title.setText(titleText);
         }
 
-        // Здесь можно добавить логику загрузки данных в dataList и обновления адаптера
-        // Например: adapter.updateData(newList);
+        initData();
+    }
+
+    private void initData() {
+        List<ScheduleItem> list = new ArrayList<>();
+
+        ScheduleItemHeader header = new ScheduleItemHeader("Понедельник, 28 января");
+        list.add(header);
+
+        ScheduleItem item = new ScheduleItem();
+        item.setStart("10:00");
+        item.setEnd("11:00");
+        item.setType("Практическое занятие");
+        item.setName("Анализ данных (анг)");
+        item.setPlace("Ауд. 503, Конюшковский пр-д., д. 3");
+        item.setTeacher("Преп. Гущин Михаил Юрьевич");
+        list.add(item);
+
+        item = new ScheduleItem();
+        item.setStart("12:00");
+        item.setEnd("13:00");
+        item.setType("Практическое занятие");
+        item.setName("Анализ данных (анг)");
+        item.setPlace("Ауд. 503, Конюшковский пр-д., д. 3");
+        item.setTeacher("Преп. Гущин Михаил Юрьевич");
+        list.add(item);
+
+        adapter.setDataList(list);
+    }
+
+    private void onScheduleItemClick(ScheduleItem data) {
+        // Обработчик клика (пока пустой, можно добавить логику позже)
     }
 }
-
