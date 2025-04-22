@@ -7,7 +7,6 @@
     <string name="university_name">NATIONAL RESEARCH UNIVERSITY</string>
     <string name="button_settings">НАСТРОЙКИ</string>
 
-
     <!-- Строки для activity_demo -->
     <string name="error_empty_input">За дурака держишь? Введите хоть что-то)</string>
     <string name="error_invalid_range">Ну, серьезно?! Число должно быть от 1 до 10!</string>
@@ -17,7 +16,6 @@
     <string name="result_sum">Сумма: %d</string>
     <string name="result_zero">Произведение чётных: 0</string>
     <string name="result_multiplicity">Произведение чётных: %d</string>
-
 
     <!-- Строки для activity_student и activity_teacher -->
     <string name="choose_teacher">Выберите преподавателя:</string>
@@ -31,8 +29,7 @@
     <string name="schedule_week">РАСПИСАНИЕ НА НЕДЕЛЮ</string>
     <string name="choose_group">Выберите группу:</string>
 
-
-    <!--  Строки для activity_settings  -->
+    <!-- Строки для activity_settings -->
     <string name="enter_name">Укажите ваше имя</string>
     <string name="current_light">Текущий уровень освещенности: %1$.2f lx</string>
     <string name="take_photo">Сделать фото</string>
@@ -41,4 +38,32 @@
     <string name="photo_permission_required">Необходимо разрешение на использование камеры</string>
     <string name="photo_saved">Успешно сохранено</string>
     <string name="sensors_list">Доступные сенсоры:</string>
+
+    <!-- Строки для ScheduleActivity -->
+    <string name="undefined_name">Время неизвестно</string>
+    <string name="day_schedule">Расписание на день</string> <!-- Текст для расписания на день -->
+    <string name="week_schedule">Расписание на неделю</string> <!-- Текст для расписания на неделю -->
+    <string name="for_text"> для </string> <!-- Текст "for" для заголовка -->
+    <string name="student_text">Студента</string> <!-- Текст "Student" для заголовка -->
+    <string name="teacher_text">Учителя</string> <!-- Текст "Teacher" для заголовка -->
+    <string name="id_prefix"> (ID: </string> <!-- Префикс для ID в заголовке -->
+    <string name="id_suffix">)</string> <!-- Суффикс для ID в заголовке -->
+    <string name="schedule_header_monday">Понедельник, 28 апреля</string> <!-- Заголовок дня -->
+    <string name="start_time_10_00">10:00</string> <!-- Время начала первого занятия -->
+    <string name="end_time_11_00">11:00</string> <!-- Время окончания первого занятия -->
+    <string name="start_time_12_00">12:00</string> <!-- Время начала второго занятия -->
+    <string name="end_time_13_00">13:00</string> <!-- Время окончания второго занятия -->
+    <string name="practical_lesson">Практическое занятие</string> <!-- Тип занятия -->
+    <string name="data_analysis_en">Анализ данных (анг)</string> <!-- Название дисциплины -->
+    <string name="room_503">Ауд. 503, Бульвар гагарина, д. 37а</string> <!-- Место проведения -->
+    <string name="teacher_gushchin">Преп. Гущин Михаил Юрьевич</string> <!-- Имя преподавателя -->
+
+    <!-- Новые строки для BasePeopleActivity -->
+    <string name="log_selected_item">selectedItem: </string> <!-- Для лога в методе onItemSelected -->
+    <string name="log_get_time_error">getTime</string> <!-- Для лога ошибки в getTime -->
+    <string name="log_parse_error">parse</string> <!-- Для лога ошибки парсинга -->
+    <string name="log_show_time_error">showTime</string> <!-- Для лога ошибки отображения времени -->
+
+    <!-- Строки для ItemAdapter -->
+    <string name="invalid_view_type">Invalid view type</string> <!-- Сообщение об ошибке для неизвестного типа элемента -->
 </resources>

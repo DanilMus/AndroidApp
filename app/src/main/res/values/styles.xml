@@ -13,7 +13,7 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <!-- Стиль для заголовка -->
+    <!-- Стиль для заголовка приложения -->
     <style name="HeaderStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
@@ -24,7 +24,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Стиль для расписания -->
+    <!-- Стиль для заголовка расписания -->
     <style name="ScheduleTitle">
         <item name="android:textSize">24sp</item> <!-- Увеличиваем размер текста -->
         <item name="android:textStyle">bold</item> <!-- Делаем текст жирным -->
