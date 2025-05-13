@@ -1,21 +1,34 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Не обфусцировать классы с аннотациями Room (важно!)
+-keepclassmembers class * {
+    @androidx.room.* <methods>;
+    @androidx.room.* <fields>;
+}
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Не обфусцировать Entity и DAO
+-keepclassmembers class * {
+    @androidx.room.Entity *;
+    @androidx.room.Dao *;
+}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# GSON
+-keep class com.google.gson.** { *; }
+-keep class * implements com.google.gson.TypeAdapter
+-keepattributes Signature
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ViewModel
+-keep class androidx.lifecycle.ViewModel { *; }
+
+# Retrofit/OkHttp (если есть)
+# -keep class retrofit2.** { *; }
+
+# Не удалять методы с аннотациями (Room, Gson, LiveData и др.)
+-keepattributes *Annotation*
+
+# Android Lifecycle
+-keep class androidx.lifecycle.** { *; }
+-keep class android.arch.lifecycle.** { *; }
+
+# Json-модели
+-keepclassmembers class * {
+    <fields>;
+}

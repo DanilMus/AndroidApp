@@ -16,15 +16,30 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("my-release-key.jks") // Путь к keystore
+            storePassword = "your_store_password"
+            keyAlias = "your_key_alias"
+            keyPassword = "your_key_password"
+        }
+    }
+
     buildTypes {
-        release {
-            isMinifyEnabled = false
+        getByName("release") {
+            isMinifyEnabled = true // Включает R8 / ProGuard
+            isShrinkResources = true // Удаляет неиспользуемые ресурсы
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release") // Конфигурация подписи
         }
     }
+
+
+
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
