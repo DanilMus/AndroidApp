@@ -94,8 +94,7 @@ public class ScheduleItem {
 
 // Класс ScheduleItemHeader — наследник ScheduleItem, используется для представления заголовков дней в расписании
 class ScheduleItemHeader extends ScheduleItem {
-    // Поле для хранения заголовка (например, "Понедельник, 28 января")
-    private String title;
+    private String title; // Поле для хранения заголовка (например, "Понедельник, 28 января")
 
     // Конструктор для создания заголовка
     public ScheduleItemHeader(String title) {

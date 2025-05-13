@@ -66,4 +66,9 @@
 
     <!-- Строки для ItemAdapter -->
     <string name="invalid_view_type">Invalid view type</string> <!-- Сообщение об ошибке для неизвестного типа элемента -->
+
+    <!-- Строки для БД -->
+    <string name="no_pair">Нет пар</string>
+    <string name="in_progress">Идет пара</string>
+    <string name="no_schedule">Расписания нет</string>
 </resources>

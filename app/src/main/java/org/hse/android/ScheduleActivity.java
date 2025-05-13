@@ -2,138 +2,164 @@ package org.hse.android;
 
 import android.os.Bundle;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-// Класс активности для отображения расписания (на день или неделю) для студента или преподавателя
 public class ScheduleActivity extends AppCompatActivity {
-    // Поля для хранения параметров, переданных из BasePeopleActivity
-    private BasePeopleActivity.ScheduleType type; // Тип расписания (DAY или WEEK)
-    private BasePeopleActivity.ScheduleMode mode; // Режим отображения (STUDENT или TEACHER)
-    private int id; // ID группы или преподавателя
-    private String name; // Имя группы или преподавателя
-    private Date currentTime; // Текущее время, полученное с сервера
+    private BasePeopleActivity.ScheduleType type;
+    private BasePeopleActivity.ScheduleMode mode;
+    private int id;
+    private String name;
+    private Date currentTime;
+    private TextView title;
+    private RecyclerView recyclerView;
+    private ItemAdapter adapter;
+    private MainViewModel mainViewModel;
 
-    // Поля для элементов интерфейса
-    private TextView title; // TextView для отображения заголовка расписания
-    private RecyclerView recyclerView; // RecyclerView для отображения списка занятий
-    private ItemAdapter adapter; // Адаптер для RecyclerView
-
-    // Метод жизненного цикла onCreate, вызывается при создании активности
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_schedule); // Устанавливаем layout для активности
+        setContentView(R.layout.activity_schedule);
 
-        // --- Извлечение параметров из Intent ---
-        // Получаем данные, переданные из BasePeopleActivity через Intent
-        type = (BasePeopleActivity.ScheduleType) getIntent().getSerializableExtra("ARG_TYPE"); // Тип расписания
-        mode = (BasePeopleActivity.ScheduleMode) getIntent().getSerializableExtra("ARG_MODE"); // Режим отображения
-        id = getIntent().getIntExtra("ARG_ID", -1); // ID группы/преподавателя, -1 — значение по умолчанию
-        name = getIntent().getStringExtra("ARG_NAME"); // Имя группы/преподавателя
-        currentTime = (Date) getIntent().getSerializableExtra("ARG_TIME"); // Текущее время
+        type = (BasePeopleActivity.ScheduleType) getIntent().getSerializableExtra("ARG_TYPE");
+        mode = (BasePeopleActivity.ScheduleMode) getIntent().getSerializableExtra("ARG_MODE");
+        id = getIntent().getIntExtra("ARG_ID", -1);
+        name = getIntent().getStringExtra("ARG_NAME");
+        currentTime = (Date) getIntent().getSerializableExtra("ARG_TIME");
 
-        // --- Инициализация UI ---
-        title = findViewById(R.id.title); // Находим TextView для заголовка
-        TextView dateView = findViewById(R.id.date); // Находим TextView для отображения даты
-        recyclerView = findViewById(R.id.listView); // Находим RecyclerView для списка занятий
+        title = findViewById(R.id.title);
+        TextView dateView = findViewById(R.id.date);
+        recyclerView = findViewById(R.id.listView);
 
-        // --- Настройка RecyclerView ---
-        recyclerView.setLayoutManager(new LinearLayoutManager(this)); // Устанавливаем вертикальный LinearLayoutManager
-        // Добавляем разделитель между элементами списка
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        // --- Инициализация адаптера для RecyclerView ---
-        adapter = new ItemAdapter(this::onScheduleItemClick); // Создаём адаптер с обработчиком кликов
-        recyclerView.setAdapter(adapter); // Привязываем адаптер к RecyclerView
+        adapter = new ItemAdapter(this::onScheduleItemClick);
+        recyclerView.setAdapter(adapter);
 
-        // --- Установка заголовка расписания ---
         if (title != null) {
-            // Формируем текст заголовка: "Day Schedule for Student ПИ-22-1 (ID: 1)" или аналогичный
             String titleText = (type == BasePeopleActivity.ScheduleType.DAY ?
-                    getString(R.string.day_schedule) : getString(R.string.week_schedule)) + // "Day Schedule" или "Week Schedule"
-                    getString(R.string.for_text) + // " for "
+                    getString(R.string.day_schedule) : getString(R.string.week_schedule)) +
+                    " " + getString(R.string.for_text) + " " +
                     (mode == BasePeopleActivity.ScheduleMode.STUDENT ?
-                            getString(R.string.student_text) : getString(R.string.teacher_text)) + // "Student" или "Teacher"
-                    " " + name + // Имя группы/преподавателя
-                    getString(R.string.id_prefix) + id + getString(R.string.id_suffix); // " (ID: " + id + ")"
-            title.setText(titleText); // Устанавливаем текст в TextView
+                            getString(R.string.student_text) : getString(R.string.teacher_text)) +
+                    " " + name +
+                    " " + getString(R.string.id_prefix) + id + getString(R.string.id_suffix);
+            title.setText(titleText);
         }
 
-        // --- Установка отформатированной даты ---
         if (dateView != null) {
-            String formattedTime = "";
+            String formattedTime;
             if (currentTime != null) {
-                // Форматируем дату в нужный формат: "Апрель 21, Понедельник"
-                SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.forLanguageTag("ru")); // Полное название месяца
-                SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.getDefault()); // Число месяца
-                SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEEE", Locale.forLanguageTag("ru")); // Полное название дня недели
+                SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.forLanguageTag("ru"));
+                SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.getDefault());
+                SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEEE", Locale.forLanguageTag("ru"));
 
-                String month = monthFormat.format(currentTime); // Получаем месяц (например, "апрель")
-                String day = dayFormat.format(currentTime); // Получаем число (например, "21")
-                String dayOfWeek = dayOfWeekFormat.format(currentTime); // Получаем день недели (например, "понедельник")
+                String month = monthFormat.format(currentTime);
+                String day = dayFormat.format(currentTime);
+                String dayOfWeek = dayOfWeekFormat.format(currentTime);
 
-                // Приводим первую букву месяца и дня недели к заглавной
-                month = month.substring(0, 1).toUpperCase() + month.substring(1); // "апрель" -> "Апрель"
-                dayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1); // "понедельник" -> "Понедельник"
+                // Приводим первую букву каждого слова к заглавной
+                month = month.substring(0, 1).toUpperCase() + month.substring(1);
+                dayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1);
 
-                // Формируем строку: "Апрель 21, Понедельник"
                 formattedTime = month + " " + day + ", " + dayOfWeek;
             } else {
-                // Если время не удалось получить, отображаем сообщение из strings.xml
                 formattedTime = getString(R.string.undefined_name);
             }
-            dateView.setText(formattedTime); // Устанавливаем отформатированное время в TextView
+            dateView.setText(formattedTime);
         }
 
-        // Инициализируем тестовые данные для списка расписания
-        initData();
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        filterItem(currentTime);
     }
 
-    // Метод для инициализации тестовых данных (заполняет список расписания)
-    private void initData() {
-        List<ScheduleItem> list = new ArrayList<>(); // Создаём пустой список для элементов расписания
+    private void filterItem(Date dateTime) {
+        if (dateTime == null) return;
 
-        // --- Добавляем заголовок дня (например, "Понедельник, 28 января") ---
-        ScheduleItemHeader header = new ScheduleItemHeader(getString(R.string.schedule_header_monday)); // Заголовок из strings.xml
-        list.add(header); // Добавляем заголовок в список
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dateTime);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startDate = cal.getTime();
+        Date endDate;
 
-        // --- Добавляем первое занятие ---
-        ScheduleItem item = new ScheduleItem(); // Создаём новый элемент расписания
-        item.setStart(getString(R.string.start_time_10_00)); // Устанавливаем время начала: "10:00"
-        item.setEnd(getString(R.string.end_time_11_00)); // Устанавливаем время окончания: "11:00"
-        item.setType(getString(R.string.practical_lesson)); // Тип занятия: "Практическое занятие"
-        item.setName(getString(R.string.data_analysis_en)); // Название: "Анализ данных (анг)"
-        item.setPlace(getString(R.string.room_503)); // Место: "Ауд. 503, Конюшковский пр-д., д. 3"
-        item.setTeacher(getString(R.string.teacher_gushchin)); // Преподаватель: "Преп. Гущин Михаил Юрьевич"
-        list.add(item); // Добавляем занятие в список
+        if (type == BasePeopleActivity.ScheduleType.DAY) {
+            endDate = startDate;
+        } else {
+            cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+            cal.add(Calendar.WEEK_OF_YEAR, 1);
+            cal.add(Calendar.DAY_OF_WEEK, -1);
+            endDate = cal.getTime();
+        }
 
-        // --- Добавляем второе занятие ---
-        item = new ScheduleItem(); // Создаём ещё один элемент расписания
-        item.setStart(getString(R.string.start_time_12_00)); // Устанавливаем время начала: "12:00"
-        item.setEnd(getString(R.string.end_time_13_00)); // Устанавливаем время окончания: "13:00"
-        item.setType(getString(R.string.practical_lesson)); // Тип занятия: "Практическое занятие"
-        item.setName(getString(R.string.data_analysis_en)); // Название: "Анализ данных (анг)"
-        item.setPlace(getString(R.string.room_503)); // Место: "Ауд. 503, Конюшковский пр-д., д. 3"
-        item.setTeacher(getString(R.string.teacher_gushchin)); // Преподаватель: "Преп. Гущин Михаил Юрьевич"
-        list.add(item); // Добавляем занятие в список
+        Observer<List<TimeTableWithTeacherEntity>> observer = new Observer<List<TimeTableWithTeacherEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<TimeTableWithTeacherEntity> list) {
+                List<Object> displayList = new ArrayList<>();
+                if (list != null && !list.isEmpty()) {
+                    Date currentDay = null;
+                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                    SimpleDateFormat headerFormat = new SimpleDateFormat("EEEE, dd MMMM", Locale.forLanguageTag("ru"));
 
-        // Передаём список данных в адаптер для отображения
-        adapter.setDataList(list);
+                    for (TimeTableWithTeacherEntity entity : list) {
+                        TimeTableEntity timeTable = entity.timeTableEntity;
+                        Date lessonDate = timeTable.timeStart;
+
+                        if (currentDay == null || !isSameDay(currentDay, lessonDate)) {
+                            currentDay = lessonDate;
+                            String headerText = headerFormat.format(currentDay);
+                            headerText = headerText.substring(0, 1).toUpperCase() + headerText.substring(1);
+                            displayList.add(new ScheduleItemHeader(headerText));
+                        }
+
+                        ScheduleItem item = new ScheduleItem();
+                        item.setStart(timeFormat.format(timeTable.timeStart));
+                        item.setEnd(timeFormat.format(timeTable.timeEnd));
+                        item.setType(String.valueOf(timeTable.type));
+                        item.setName(timeTable.subName);
+                        item.setPlace(timeTable.cabinet + ", " + timeTable.corp);
+                        item.setTeacher(entity.teacherEntity.fio);
+                        displayList.add(item);
+                    }
+                } else {
+                    displayList.add(new ScheduleItemHeader(getString(R.string.no_schedule)));
+                }
+                adapter.setDataList(displayList);
+            }
+        };
+
+        if (mode == BasePeopleActivity.ScheduleMode.STUDENT) {
+            mainViewModel.getTimeTableByDateAndGroupId(startDate, endDate, id).observe(this, observer);
+        } else {
+            mainViewModel.getTimeTableByDateAndTeacherId(startDate, endDate, id).observe(this, observer);
+        }
     }
 
-    // Метод-обработчик кликов по элементам списка (пока пустой)
+    private boolean isSameDay(Date date1, Date date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date1);
+        cal2.setTime(date2);
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+    }
+
     private void onScheduleItemClick(ScheduleItem data) {
-        // Здесь можно добавить логику обработки клика по элементу расписания
-        // Например, показать детали занятия или открыть новую активность
+        // Логика обработки клика по элементу расписания
     }
 }

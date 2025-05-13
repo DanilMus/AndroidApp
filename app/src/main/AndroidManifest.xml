@@ -3,11 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.hse.android">
     <!-- Разрешение на камеру -->
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- Устройство с камерой желательно, но не обязательно -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Устройство с камерой желательно, но не обязательно -->
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false" /> <!-- Разрешение на доступ в интернет -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Позволяет находить приложения, которые могут обрабатывать фото -->
+        android:required="false" />
+
+    <!-- Разрешение на доступ в интернет -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Позволяет находить приложения, которые могут обрабатывать фото -->
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
