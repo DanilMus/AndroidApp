@@ -1,26 +1,14 @@
 package org.hse.android;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Database;
-import androidx.room.Embedded;
-import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
-import androidx.room.Query;
-import androidx.room.Relation;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Delete;
-import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
-import androidx.room.Transaction;
 import androidx.sqlite.db.SupportSQLiteDatabase;
-import androidx.lifecycle.LiveData;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,28 +17,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
-
-// DatabaseManager
-
 @Database(entities = {GroupEntity.class, TeacherEntity.class, TimeTableEntity.class}, version = 1)
 @TypeConverters({Converters.class})
 public abstract class DatabaseManager extends RoomDatabase {
     private static DatabaseManager instance;
+
     public abstract HseDao hseDao();
 
-    public static DatabaseManager getInstance(Context context) {
+    public static synchronized DatabaseManager getInstance(Context context) {
         if (instance == null) {
-            instance = Room.databaseBuilder(context, DatabaseManager.class, "DATABASE_NAME")
-                    .addCallback(new RoomDatabase.Callback() {
+            instance = Room.databaseBuilder(context.getApplicationContext(), DatabaseManager.class, "DATABASE_NAME")
+                    .addCallback(new Callback() {
                         @Override
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                            Executors.newSingleThreadScheduledExecutor().execute(() -> {
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        initData(context);
-                                    }
-                                };
+                            super.onCreate(db);
+                            Executors.newSingleThreadExecutor().execute(() -> {
+                                DatabaseManager localInstance = getInstance(context); // ⚠️ создаем локально
+                                initData(context, localInstance.hseDao()); // ✅ безопасно
                             });
                         }
                     })
@@ -59,7 +42,8 @@ public abstract class DatabaseManager extends RoomDatabase {
         return instance;
     }
 
-    private static void initData(Context context) {
+    // Сделаем метод публичным, если будем вызывать вручную в Application
+    public static void initData(Context context, HseDao dao) {
         List<GroupEntity> groups = new ArrayList<>();
         GroupEntity group = new GroupEntity();
         group.id = 1;
@@ -69,7 +53,7 @@ public abstract class DatabaseManager extends RoomDatabase {
         group.id = 2;
         group.name = "ПИЯЯ-18-2";
         groups.add(group);
-        DatabaseManager.getInstance(context).hseDao().insertGroup(groups);
+        dao.insertGroup(groups);
 
         List<TeacherEntity> teachers = new ArrayList<>();
         TeacherEntity teacher = new TeacherEntity();
@@ -80,36 +64,49 @@ public abstract class DatabaseManager extends RoomDatabase {
         teacher.id = 2;
         teacher.fio = "Петров2 Петр2 Петрович2";
         teachers.add(teacher);
-        DatabaseManager.getInstance(context).hseDao().insertTeacher(teachers);
+        dao.insertTeacher(teachers);
 
         List<TimeTableEntity> timeTables = new ArrayList<>();
         TimeTableEntity timeTable = new TimeTableEntity();
         timeTable.id = 1;
-        timeTable.cabinet = "КАБИНЕТ 1";
-        timeTable.subGroup = "ПИ";
+        timeTable.subGroup = "ПИ1";
         timeTable.subName = "Языковая разработка";
+        timeTable.cabinet = "КАБИНЕТ 1";
         timeTable.corp = "К1";
-        timeTable.type = 0;
-        timeTable.timeStart = dateFromString("2021-02-01 10:00");
-        timeTable.timeEnd = dateFromString("2021-02-01 11:30");
+        timeTable.type = 1;
+        timeTable.timeStart = dateFromString("2025-05-13 10:00");
+        timeTable.timeEnd = dateFromString("2025-05-13 11:30");
         timeTable.groupId = 1;
         timeTable.teacherId = 1;
         timeTables.add(timeTable);
 
         timeTable = new TimeTableEntity();
         timeTable.id = 2;
-        timeTable.cabinet = "КАБИНЕТ 2";
-        timeTable.subGroup = "ПИ";
+        timeTable.subGroup = "ПИ1";
         timeTable.subName = "Языковая разработка";
+        timeTable.cabinet = "КАБИНЕТ 2";
         timeTable.corp = "К1";
         timeTable.type = 0;
-        timeTable.timeStart = dateFromString("2021-02-01 13:00");
-        timeTable.timeEnd = dateFromString("2021-02-01 15:00");
+        timeTable.timeStart = dateFromString("2025-05-13 13:00");
+        timeTable.timeEnd = dateFromString("2025-05-13 15:00");
         timeTable.groupId = 1;
         timeTable.teacherId = 2;
         timeTables.add(timeTable);
 
-        DatabaseManager.getInstance(context).hseDao().insertTimeTable(timeTables);
+        timeTable = new TimeTableEntity();
+        timeTable.id = 3;
+        timeTable.subGroup = "БИ1";
+        timeTable.subName = "Математика";
+        timeTable.cabinet = "КАБИНЕТ 3";
+        timeTable.corp = "К2";
+        timeTable.type = 1;
+        timeTable.timeStart = dateFromString("2025-05-14 10:00");
+        timeTable.timeEnd = dateFromString("2025-05-14 11:30");
+        timeTable.groupId = 2;
+        timeTable.teacherId = 1;
+        timeTables.add(timeTable);
+
+        dao.insertTimeTable(timeTables);
     }
 
     private static Date dateFromString(String val) {
