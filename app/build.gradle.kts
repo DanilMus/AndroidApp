@@ -16,15 +16,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Для создания APK приложения
     signingConfigs {
         create("release") {
             storeFile = file("my-release-key.jks") // Путь к keystore
-            storePassword = "your_store_password"
-            keyAlias = "your_key_alias"
-            keyPassword = "your_key_password"
+            storePassword = "Danil17"
+            keyAlias = "my-key-alias"
+            keyPassword = "Danil17"
         }
     }
 
+    // Для создания APK приложения
     buildTypes {
         getByName("release") {
             isMinifyEnabled = true // Включает R8 / ProGuard

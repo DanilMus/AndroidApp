@@ -32,3 +32,8 @@
 -keepclassmembers class * {
     <fields>;
 }
+
+# Этих файлов нет для OkHTTP, пусть не паникует
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**

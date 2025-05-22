@@ -149,7 +149,8 @@ public abstract class BasePeopleActivity extends AppCompatActivity {
 
     // Метод для получения текущего времени с сервера
     protected void getTime() {
-        Request request = new Request.Builder().url(URL).build(); // Создаём HTTP-запрос
+       // mainViewModel.fetchTime();
+       /* Request request = new Request.Builder().url(URL).build(); // Создаём HTTP-запрос
         Call call = client.newCall(request); // Создаём вызов через OkHttp
 
         // Асинхронно отправляем запрос
@@ -164,11 +165,11 @@ public abstract class BasePeopleActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 parseResponse(response); // Обрабатываем ответ сервера
             }
-        });
+        });*/
     }
 
     // Метод для парсинга ответа сервера с временем
-    private void parseResponse(Response response) throws IOException {
+    /*private void parseResponse(Response response) throws IOException {
         Gson gson = new Gson(); // Создаём объект Gson для парсинга JSON
         ResponseBody body = response.body(); // Получаем тело ответа
 
@@ -202,7 +203,7 @@ public abstract class BasePeopleActivity extends AppCompatActivity {
                 Log.e(TAG, getString(R.string.log_show_time_error), e);
             }
         });
-    }
+    }*/
 
     // Метод для отображения времени в TextView
     protected void showTime(Date dateTime) {

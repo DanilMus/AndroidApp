@@ -13,4 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-my-release-key.jks
+app/my-release-key.jks

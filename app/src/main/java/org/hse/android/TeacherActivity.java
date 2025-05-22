@@ -19,13 +19,19 @@ import java.util.List;
 public class TeacherActivity extends BasePeopleActivity {
     private static final String TAG = "TeacherActivity";
 
+    // ViewModel, через который получаем данные
     private MainViewModel mainViewModel;
+
+    // Выбранный преподаватель
     private Group selectedTeacher;
+
+    // Флаги для контроля состояния загрузки
     private boolean isTeacherSelected = false;
     private boolean isTimeLoaded = false;
 
     @Override
     protected int getLayoutResId() {
+        // Указываем layout-файл для этой Activity
         return R.layout.activity_teacher;
     }
 
@@ -33,42 +39,53 @@ public class TeacherActivity extends BasePeopleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Получаем ViewModel для работы с данными
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // Получаем время
+        // Подписываемся на LiveData текущего времени
         mainViewModel.getCurrentTime().observe(this, date -> {
             if (date != null) {
+                // Сохраняем текущее время и устанавливаем флаг
                 currentTime = date;
                 isTimeLoaded = true;
                 Log.d(TAG, "Time loaded: " + currentTime);
 
+                // Если преподаватель уже выбран — отображаем расписание
                 if (isTeacherSelected) {
                     showTime(currentTime);
                 }
             }
         });
 
+        // Запрашиваем время с сервера
         mainViewModel.fetchTime();
+
+        // Инициализируем список преподавателей из базы данных
         initTeacherListFromDatabase();
     }
 
+    // Получение списка преподавателей и установка обработчика выбора
     private void initTeacherListFromDatabase() {
         final Spinner spinner = findViewById(R.id.groupList);
         final List<Group> teachers = new ArrayList<>();
 
+        // Подписываемся на LiveData со списком преподавателей
         mainViewModel.getTeachers().observe(this, new Observer<List<TeacherEntity>>() {
             @Override
             public void onChanged(@Nullable List<TeacherEntity> teacherEntities) {
                 if (teacherEntities != null) {
                     teachers.clear();
+                    // Конвертируем TeacherEntity в Group (имя + id)
                     for (TeacherEntity entity : teacherEntities) {
                         teachers.add(new Group(entity.id, entity.fio));
                     }
 
+                    // Настраиваем адаптер для выпадающего списка
                     ArrayAdapter<Group> adapter = new ArrayAdapter<>(TeacherActivity.this, android.R.layout.simple_spinner_item, teachers);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setAdapter(adapter);
 
+                    // Устанавливаем слушатель выбора преподавателя
                     spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -76,6 +93,7 @@ public class TeacherActivity extends BasePeopleActivity {
                             isTeacherSelected = true;
                             Log.d(TAG, "Selected teacher: " + selectedTeacher.getName());
 
+                            // Если время уже загружено, показываем расписание
                             if (isTimeLoaded) {
                                 showTime(currentTime);
                             } else {
@@ -99,6 +117,7 @@ public class TeacherActivity extends BasePeopleActivity {
         super.showTime(dateTime);
         if (selectedTeacher == null || dateTime == null) return;
 
+        // Устанавливаем границы текущего дня: [00:00, 23:59]
         Calendar cal = Calendar.getInstance();
         cal.setTime(dateTime);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -109,16 +128,19 @@ public class TeacherActivity extends BasePeopleActivity {
         cal.add(Calendar.DAY_OF_YEAR, 1);
         Date endDate = cal.getTime();
 
+        // Получаем расписание для выбранного преподавателя и даты
         mainViewModel.getTimeTableByDateAndTeacherId(startDate, endDate, selectedTeacher.getId()).observe(this, new Observer<List<TimeTableWithTeacherEntity>>() {
             @Override
             public void onChanged(@Nullable List<TimeTableWithTeacherEntity> list) {
                 if (list != null) {
                     for (TimeTableWithTeacherEntity entity : list) {
+                        // Проверяем, есть ли пара в этот день
                         if (isSameDay(entity.timeTableEntity.timeStart, dateTime)) {
                             initDataFromTimeTable(entity);
                             return;
                         }
                     }
+                    // Если ничего не найдено
                     initDataFromTimeTable(null);
                 } else {
                     Log.w(TAG, "No timetable returned for teacher");
@@ -127,6 +149,7 @@ public class TeacherActivity extends BasePeopleActivity {
         });
     }
 
+    // Проверка, совпадают ли даты по дню
     private boolean isSameDay(Date date1, Date date2) {
         if (date1 == null || date2 == null) return false;
         Calendar cal1 = Calendar.getInstance();
@@ -137,8 +160,10 @@ public class TeacherActivity extends BasePeopleActivity {
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
     }
 
+    // Отображение информации о паре, либо заглушки, если пары нет
     private void initDataFromTimeTable(TimeTableWithTeacherEntity timeTableTeacherEntity) {
         if (timeTableTeacherEntity == null) {
+            // Если пары нет
             status.setText(R.string.no_pair);
             subject.setText(R.string.subject);
             cabinet.setText(R.string.cabinet);
@@ -147,6 +172,7 @@ public class TeacherActivity extends BasePeopleActivity {
             return;
         }
 
+        // Если пара есть — заполняем поля
         status.setText(R.string.in_progress);
         TimeTableEntity timeTableEntity = timeTableTeacherEntity.timeTableEntity;
         subject.setText(timeTableEntity.subName);
@@ -155,13 +181,16 @@ public class TeacherActivity extends BasePeopleActivity {
         teacher.setText(timeTableTeacherEntity.teacherEntity.fio);
     }
 
+    // Переопределён, но не используется
     @Override
     protected void initData() {
         super.initData();
     }
 
+    // Метод обязателен по контракту, но не нужен для преподавателей
     @Override
     protected void initGroupList(List<Group> groups) {
         // Не используется
     }
 }
+
